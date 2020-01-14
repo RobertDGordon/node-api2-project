@@ -1,10 +1,4 @@
-const server = require('express').server
-
-server.use(express.json());
-
-const router = require('./router/router');
-
-server.use('/api', router)
+const server = require('./api/server.js');
 
 const port = 4000;
 const hostname = '127.0.0.1'; 
