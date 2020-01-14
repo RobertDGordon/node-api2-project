@@ -37,15 +37,17 @@ router.get('/', (req, res) => {
   });
   
   router.post('/', (req, res) => {
+    if (!req.title || !req.contents){
+        return res.status(400).json({ message: "Please provide title and contents for the post."})
+    }
     Posts.add(req.body)
       .then(post => {
         res.status(201).json(post);
       })
       .catch(error => {
-        // log error to database
         console.log(error);
         res.status(500).json({
-          message: 'Error adding the post',
+          message: "There was an error while saving the post to the database",
         });
       });
   });
@@ -69,6 +71,9 @@ router.get('/', (req, res) => {
   });
   
   router.put('/:id', (req, res) => {
+    if (!req.title || !req.contents){
+        return res.status(400).json({ message: "Please provide title and contents for the post."})
+    }
     const changes = req.body;
     Posts.update(req.params.id, changes)
       .then(post => {
