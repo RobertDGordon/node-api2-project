@@ -19,12 +19,13 @@ router.get('/', (req, res) => {
   });
   
   router.get('/:id', (req, res) => {
+    // console.log(req.params.id)
     Posts.findById(req.params.id)
       .then(post => {
-        if (post) {
-          res.status(200).json(post);
+        if (!post) {
+            res.status(404).json({ message: 'post not found' });
         } else {
-          res.status(404).json({ message: 'post not found' });
+            res.status(200).json(post);
         }
       })
       .catch(error => {
@@ -37,10 +38,11 @@ router.get('/', (req, res) => {
   });
   
   router.post('/', (req, res) => {
-    if (!req.title || !req.contents){
+    if (!req.body.title || !req.body.contents){
         return res.status(400).json({ message: "Please provide title and contents for the post."})
     }
-    Posts.add(req.body)
+    // console.log(req.body)
+    Posts.insert(req.body)
       .then(post => {
         res.status(201).json(post);
       })
@@ -71,7 +73,7 @@ router.get('/', (req, res) => {
   });
   
   router.put('/:id', (req, res) => {
-    if (!req.title || !req.contents){
+    if (!req.body.title || !req.body.contents){
         return res.status(400).json({ message: "Please provide title and contents for the post."})
     }
     const changes = req.body;
