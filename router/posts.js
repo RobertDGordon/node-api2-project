@@ -38,7 +38,7 @@ router.get('/', (req, res) => {
   });
 
   router.get('/:id/comments', (req, res) => {
-    Posts.findCommentById(req.params.id)
+    Posts.findPostComments(req.params.id)
     .then(comment => {
       if (!comment) {
         res.status(404).json({ message: 'The post with the specified ID does not exist.' })
@@ -76,16 +76,33 @@ router.get('/', (req, res) => {
         return res.status(400).json({ message: "Please provide title and contents for the post."})
     }
     // console.log(req.body)
-    Posts.insertComment(req.body)
-      .then(post => {
-        res.status(201).json(post);
-      })
-      .catch(error => {
-        console.log(error);
-        res.status(500).json({
-          message: "There was an error while saving the post to the database",
-        });
+
+    //find comment by id
+    Posts.findById(req.params.id)
+        .then(post => {
+            if (!post) {
+                res.status(404).json({ message: 'post not found' });
+            } else {
+                 Posts.insertComment(req.body.text, req.params.id)
+                .then(post => {
+                    res.status(201).json(post);
+                })
+                .catch(error => {
+                    console.log(error);
+                    res.status(500).json({
+                    message: "There was an error while saving the post to the database",
+                    });
+                });
+            }
+        })
+        .catch(error => {
+            // log error to database
+            console.log(error);
+            res.status(500).json({
+            message: 'Error retrieving the post',
+            });
       });
+   
   });
   
   router.delete('/:id', (req, res) => {
