@@ -36,6 +36,23 @@ router.get('/', (req, res) => {
         });
       });
   });
+
+  router.get('/:id/comments', (req, res) => {
+    Posts.findCommentById(req.params.id)
+    .then(comment => {
+      if (!comment) {
+        res.status(404).json({ message: 'The post with the specified ID does not exist.' })
+      } else {
+        res.status(200).json(comment)
+      }
+    })
+    .catch(error => {
+      console.log('error on GET /api/posts/:id/comments', error)
+      res.status(500).json({
+        message: 'The comments information could not be retrieved.'
+      })
+    })
+  })
   
   router.post('/', (req, res) => {
     if (!req.body.title || !req.body.contents){
@@ -43,6 +60,23 @@ router.get('/', (req, res) => {
     }
     // console.log(req.body)
     Posts.insert(req.body)
+      .then(post => {
+        res.status(201).json(post);
+      })
+      .catch(error => {
+        console.log(error);
+        res.status(500).json({
+          message: "There was an error while saving the post to the database",
+        });
+      });
+  });
+
+  router.post('/:id/comments', (req, res) => {
+    if (!req.body.text){
+        return res.status(400).json({ message: "Please provide title and contents for the post."})
+    }
+    // console.log(req.body)
+    Posts.insertComment(req.body)
       .then(post => {
         res.status(201).json(post);
       })

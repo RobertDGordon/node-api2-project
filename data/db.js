@@ -52,7 +52,8 @@ function findCommentById(id) {
   return db('comments')
     .join('posts', 'posts.id', 'post_id')
     .select('comments.*', 'title as post')
-    .where('comments.id', id);
+    .where('comments.id', id)
+    .first();
 }
 
 function insertComment(comment) {
